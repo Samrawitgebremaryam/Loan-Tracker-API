@@ -12,15 +12,16 @@ import (
 func SetRouter(router *gin.Engine, uc *user_controller.UserController, lc *loan_controller.LoanController, env *bootstrap.Env) {
 	authMiddleware := auth.JwtAuthMiddleware(env.AccessTokenSecret)
 
+	router.POST("/signup", uc.SignUp)
+	router.POST("/login", uc.Login)
+	router.POST("/refresh", uc.RefreshTokens)
+	router.POST("/forgot-password", uc.ForgotPassword)
+	router.POST("/reset-password", uc.ResetPassword)
+
 	// User routes (protected by JWT middleware)
 	userRoutes := router.Group("/")
 	userRoutes.Use(authMiddleware)
 	{
-		userRoutes.POST("/signup", uc.SignUp)
-		userRoutes.POST("/login", uc.Login)
-		userRoutes.POST("/refresh", uc.RefreshTokens)
-		userRoutes.POST("/forgot-password", uc.ForgotPassword)
-		userRoutes.POST("/reset-password", uc.ResetPassword)
 		userRoutes.GET("/users/profile", uc.GetProfile)
 	}
 

@@ -10,7 +10,16 @@ import (
 
 func (lc *LoanController) ApplyForLoan(c *gin.Context) {
 	var req domain.LoanApplication
-	userID := c.MustGet("user_id").(primitive.ObjectID) // Assuming user_id is stored as ObjectID in the context
+
+	// Retrieve user_id from context as a string
+	userIDStr := c.MustGet("user_id").(string)
+
+	// Convert the string to a primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(userIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
