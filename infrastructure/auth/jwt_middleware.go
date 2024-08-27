@@ -68,8 +68,8 @@ func JwtAuthMiddleware(secret string) gin.HandlerFunc {
 
 func AdminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		isAdmin := c.GetString("usertype")
-		if isAdmin != "Admin" {
+		isAdmin := c.GetBool("isAdmin")
+		if !isAdmin {
 			c.JSON(403, gin.H{"error": "Forbidden: You don't have admin privileges"})
 			c.Abort()
 			return

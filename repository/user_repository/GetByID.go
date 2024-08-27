@@ -9,9 +9,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (r *userRepository) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
+func (r *userRepository) GetUserByID(ctx context.Context, id primitive.ObjectID) (*domain.User, error) {
 	var user domain.User
-	objectID, err := primitive.ObjectIDFromHex(id)
+	objectID, err := primitive.ObjectIDFromHex(id.String())
 	if err != nil {
 		return nil, err
 	}
