@@ -3,7 +3,6 @@ module loan_tracker_api
 go 1.22.5
 
 require (
-	github.com/badoux/checkmail v1.2.4
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
 	github.com/spf13/viper v1.19.0

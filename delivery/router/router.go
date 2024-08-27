@@ -1,6 +1,7 @@
 package router
 
 import (
+	"loan_tracker_api/delivery/controller/loan_controller"
 	"loan_tracker_api/delivery/controller/user_controller"
 	"loan_tracker_api/infrastructure/auth"
 	"loan_tracker_api/infrastructure/bootstrap"
@@ -8,26 +9,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetRouter(router *gin.Engine, uc *user_controller.UserController, env *bootstrap.Env) {
-	// User routes
+func SetRouter(router *gin.Engine, uc *user_controller.UserController, lc *loan_controller.LoanController, env *bootstrap.Env) {
+	authMiddleware := auth.JwtAuthMiddleware(env.AccessTokenSecret)
+
 	router.POST("/signup", uc.SignUp)
 	router.POST("/login", uc.Login)
 	router.POST("/refresh", uc.RefreshTokens)
 	router.POST("/forgot-password", uc.ForgotPassword)
 	router.POST("/reset-password", uc.ResetPassword)
 
-	authMiddleware := auth.JwtAuthMiddleware(env.AccessTokenSecret)
-	userRoutes := router.Group("/users")
-
-	userRoutes.Use(authMiddleware) // Apply JWT middleware to all /users route
+	// User routes (protected by JWT middleware)
+	userRoutes := router.Group("/")
+	userRoutes.Use(authMiddleware)
 	{
-		userRoutes.GET("/profile", uc.GetProfile)
+		userRoutes.GET("/users/profile", uc.GetProfile)
 	}
-	// Admin
-	adminRoutes := userRoutes.Group("/admin")
+
+	// Loan routes (protected by JWT middleware)
+	loanRoutes := router.Group("/loans")
+	loanRoutes.Use(authMiddleware)
+	{
+		loanRoutes.POST("/", lc.ApplyForLoan)
+		loanRoutes.GET("/:id", lc.ViewLoanStatus)
+	}
+
+	// Admin routes (protected by JWT and Admin middleware)
+	adminRoutes := router.Group("/admin")
 	adminRoutes.Use(auth.AdminMiddleware())
 	{
-		adminRoutes.Use(authMiddleware) // Apply JWT middleware to all /admin routes
+		adminRoutes.GET("/loans", lc.ViewAllLoans)
+		adminRoutes.PATCH("/loans/:id/status", lc.UpdateLoanStatus)
+		adminRoutes.DELETE("/loans/:id", lc.DeleteLoan)
 		adminRoutes.GET("/users", uc.GetUsers)
 		adminRoutes.DELETE("/users/:id", uc.DeleteUser)
 	}

@@ -34,7 +34,7 @@ func (u *userUsecase) SignUp(ctx context.Context, req domain.SignupRequest) (dom
 		Username:  req.Username,
 		Password:  string(hashedPassword),
 		Email:     req.Email,
-		IsAdmin:   true,
+		IsAdmin:   false,
 	}
 
 	if err := u.userRepo.CreateUser(ctx, user); err != nil {

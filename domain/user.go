@@ -27,9 +27,9 @@ type UserUsecase interface {
 	ResetPassword(ctx context.Context, req ResetPasswordRequest) error
 	GetByEmail(ctx context.Context, email string) (User, error)
 	GetByUsername(ctx context.Context, username string) (User, error)
-	GetUserByID(ctx context.Context, id string) (*User, error)
+	GetUserByID(ctx context.Context, id primitive.ObjectID) (*User, error)
 	GetUsers(ctx context.Context) ([]User, error)
-	DeleteUser(ctx context.Context, id string) error
+	DeleteUser(ctx context.Context, id primitive.ObjectID) error
 }
 
 type UserRepository interface {
@@ -37,7 +37,7 @@ type UserRepository interface {
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	GetByUsernameOrEmail(ctx context.Context, identifier string) (*User, error)
 	UpdatePasswordByEmail(ctx context.Context, email, newPassword string) error
-	GetUserByID(ctx context.Context, id string) (*User, error)
+	GetUserByID(ctx context.Context, id primitive.ObjectID) (*User, error)
 	GetUsers(ctx context.Context) ([]User, error)
-	DeleteUser(ctx context.Context, id string) error
+	DeleteUser(ctx context.Context, id primitive.ObjectID) error
 }

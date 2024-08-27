@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (r *userRepository) DeleteUser(ctx context.Context, id string) error {
-	objectID, err := primitive.ObjectIDFromHex(id)
+func (r *userRepository) DeleteUser(ctx context.Context, id primitive.ObjectID) error {
+	objectID, err := primitive.ObjectIDFromHex(id.String())
 	if err != nil {
 		return err
 	}
